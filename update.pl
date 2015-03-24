@@ -28,10 +28,10 @@ use DBI;
 # --------------------------------------------------------------------------------
 
 my $database = {
-  "host"     => "localhost",
-  "database" => "dyndns",
-  "user"     => "root",
-  "password" => "toor"
+  "host"     => $ENV{"MYSQL_HOST"} || "localhost",
+  "database" => $ENV{"MYSQL_BASE"} || "dyndns",
+  "user"     => $ENV{"MYSQL_USER"} || "root",
+  "password" => $ENV{"MYSQL_PASS"} || "toor"
 };
 
 # --------------------------------------------------------------------------------
