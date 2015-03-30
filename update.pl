@@ -14,7 +14,7 @@
 # this program; if not, write to the Free Software Foundation, Inc., 51
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# Copyright (c) 2013 Klaus Meyer 
+# Copyright (c) 2013 - 2015 Klaus Meyer
 # http://www.klaus-meyer.net/
 #
 
@@ -32,6 +32,15 @@ my $database = {
   "database" => $ENV{"MYSQL_BASE"} || "dyndns",
   "user"     => $ENV{"MYSQL_USER"} || "root",
   "password" => $ENV{"MYSQL_PASS"} || "toor"
+};
+
+# --------------------------------------------------------------------------------
+# Nameserver Configuration
+# --------------------------------------------------------------------------------
+
+my $nameserver = {
+  "host" => $ENV{"DNS_HOST"} || "",
+  "port" => $ENV{"DNS_PORT"} || "53"
 };
 
 # --------------------------------------------------------------------------------
@@ -106,7 +115,7 @@ my $profile = $dbh->selectrow_hashref(
     AND CONCAT(d.domain, '.', z.zone) = ?
 ", undef, $params->{"user"}, $params->{"password"}, $params->{"domain"});
 
-unless($profile) { send_message "badauth"; } 
+unless($profile) { send_message "badauth"; }
 
 # Set the current IP for desired domain
 my $sth = $dbh->prepare("UPDATE domains SET ip = ? WHERE domain_id = ?");
@@ -115,6 +124,8 @@ $sth->execute($params->{"ip"}, $profile->{"domain_id"});
 # Update IP in DNS server using nsupdate and the secret key stored for the zone in database
 open(NSUPDATE, "| /usr/bin/nsupdate -y hmac-sha256:ddns-key." . $profile->{"zone"} . ":" . $profile->{"key"});
 
+
+print NSUPDATE "server $nameserver->{'host'} $nameserver->{'port'}\n" unless $nameserver->{"host"} eq "";
 print NSUPDATE "update delete " . $params->{"domain"} . " A\n";
 print NSUPDATE "update add " . $params->{"domain"} . " 60 A " . $params->{"ip"} . "\n";
 print NSUPDATE "send\n";
