@@ -90,7 +90,7 @@ my $params = {
   "domain"   => $cgi->param("domain") || "",
   "user"     => get_http_auth("user") || "",
   "password" => get_http_auth("password") || "",
-  "ip"       => $ENV{"REMOTE_ADDR"} || ""
+  "ip"       => $ENV{"HTTP_X_REAL_IP"} || $ENV{"HTTP_X_FORWARDED_FOR"} || $ENV{"REMOTE_ADDR"} || ""
 };
 
 # Validate if all necessary parameters are provided and raise error if not
