@@ -1,6 +1,6 @@
 # km-dyndns
 
-A small cgi script providing a dnynamic dns service written in perl, using a mysql database.  
+A small cgi script providing a dynamic dns service written in perl, using a mysql database.  
 The script is desined to work for dyndns client integrated in the "FritzBox" routers, but can be customized for your needs.
 
 ## licence
